@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Weekly To-Do VIP — Ultimate</title>
+<style>
+  /* ---------- THEME COLORS ---------- */
+  :root{
+    --bg1:#071428; --bg2:#0e2a4a; --card:#1f9283; --text:#07203b;
+    --accent:#2a7fff; --accent-2:#1e56ff; --muted:#6b7f99;
+    --good:#27ae60; --danger:#e74c3c;
+  }
+  body.dark{/* ...existing code... */
+
+/* Responsive styles for laptop and mobile */
+@media (max-width: 1100px) {
+  .wrap {
+    max-width: 98vw;
+    padding: 8px;
+  }
+  .board {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 10px;
+  }
+  .card {
+    min-height: 220px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .wrap {
+    padding: 4px;
+  }
+  header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .brand {
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  .logo {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  .subtitle {
+    font-size: 12px;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  input[type="search"] {
+    width: 100px;
+    min-width: 80px;
+  }
+  .card {
+    min-height: 180px;
+    padding: 8px;
+  }
+  .controls {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .add {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bulk {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .footerbar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .progress {
+    min-width: 120px;
+    width: 100%;
+  }
+  .notesCard {
+    padding: 8px;
+  }
+  .notesCard textarea {
+    min-height: 60px;
+    font-size: 14px;
+  }
+}
+
+/* ...existing code... */
+    --bg1:#0b1220; --bg2:#091121; --card:#0f213b; --text:#e6f0ff;
+    --accent:#79a8ff; --accent-2:#5a8dff; --muted:#92a4c6;
+  }
+  body.light{
+    --bg1:#e6f0ff; --bg2:#f7fbff; --card:#fff; --text:#07203b;
+    --accent:#1e6bff; --accent-2:#2a7fff; --muted:#62748a;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(160deg,var(--bg1),var(--bg2));
+    color:var(--text); min-height:100vh;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+
+  .wrap{max-width:1200px;margin:16px auto;padding:14px}
+
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:white;font-weight:800;font-size:16px;box-shadow:0 6px 18px rgba(0,0,0,.25);}
+  h1{margin:0;color:#fff;font-size:20px}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:3px}
+
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input[type="date"], input[type="search"], select, input[type="file"], input[type="time"], input[type="datetime-local"]{
+    padding:8px 10px;border-radius:10px;border:none;min-height:38px;outline:none;
+  }
+  input[type="search"]{width:220px}
+  .btn{background:var(--accent);color:white;border:none;padding:9px 12px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 6px 14px rgba(18,40,80,0.25)}
+  .btn.ghost{background:rgba(255,255,255,0.95);color:var(--text);box-shadow:none}
+  .btn.small{padding:6px 8px;font-size:13px}
+  .btn.warn{background:var(--danger)}
+  .btn.success{background:var(--good)}
+  .btn.alt{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff}
+
+  /* BOARD GRID */
+  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+
+  .card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 10px 30px rgba(2,12,34,0.25);display:flex;flex-direction:column;min-height:300px;transition:transform .12s ease,background .2s ease}
+  .card:hover{transform:translateY(-4px)}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .head h3{margin:0;font-size:18px}
+  .meta{font-size:12px;color:var(--muted)}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .control{background:#f5f8ff;border-radius:10px;padding:6px 8px;display:flex;gap:6px;align-items:center;font-size:13px;border:1px solid #e7eefc}
+  .control input[type="color"]{width:34px;height:34px;padding:0;border:none;margin:0;background:none}
+  .control input[type="range"]{width:110px}
+
+  .add{display:flex;gap:6px;margin-bottom:10px}
+  .add input[type="text"], .add input[type="datetime-local"]{flex:1;padding:5px;border-radius:10px;border:1px solid #e6eef8;outline:none;background:transparent;width: 50px;}
+  .add .btn{min-width:78px}
+  .add input[type="datetime-local"] {
+  min-width: 120px;
+  width: 50px;
+  box-sizing: border-box;
+  margin-left: 5px;
+  font-size: 15px;
+  background: #fff;
+  border: 1px solid #e6eef8;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+@media (max-width: 700px) {
+  .add {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .add input[type="datetime-local"] {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+  ul.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;flex:1;overflow:auto;max-height:420px}
+  li.task{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px;border-radius:10px;background:#f7f9ff;border:1px solid #e6eef8}
+  li.task .check{width:18px;height:18px}
+  li.task .text{outline:none;padding:4px;min-height:20px}
+  li.task.completed{background:#eafaf0;border-color:#d6f0dd}
+  .actions{display:flex;gap:6px}
+  .chip{padding:6px 8px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:13px}
+  .chip.edit{background:linear-gradient(90deg,#e8f1ff,#e0edff);color:var(--accent)}
+  .chip.del{background:#ffe7e5;color:#c0392b}
+  .chip.stick{background:#fff2e0;color:#b35c00}
+
+  .bulk{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .notesCard{margin-top:12px;padding:12px;border-radius:12px;background:var(--card);box-shadow:0 8px 20px rgba(2,12,34,0.15)}
+  .notesCard textarea{width:100%;min-height:90px;border-radius:10px;padding:10px;border:1px solid #e6eef8;outline:none;background:transparent;color:inherit}
+
+  .footerbar{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:12px;flex-wrap:wrap}
+  .progress{flex:1;height:14px;background:#e9f2ff;border-radius:999px;overflow:hidden}
+  .progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--good),#8be78b)}
+
+  .small-muted{font-size:12px;color:var(--muted)}
+  @media print{ header,.toolbar,.footerbar,.btn,.chip,.controls,.add,.bulk{display:none!important} body{background:#fff;color:#000} .card{box-shadow:none} }
+  @media (max-width:700px){ input[type="search"]{width:120px} .logo{width:48px;height:48px} .card{min-height:260px} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">VIP</div>
+        <div>
+          <h1 style="color:#000">Weekly To-Do Planner — Ultimate</h1>
+          <div style="color:#00000088"class="subtitle">Blue theme · Reminders · Custom stickers · Export/Import · Print</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input type="date" id="weekDate" title="Choose week date" />
+        <input type="search" id="search" placeholder="Search tasks or stickers..." />
+        <button class="btn ghost small" id="exportBtn">Export</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none" />
+        <button class="btn ghost small" id="importBtn">Import</button>
+        <select id="themeSelect" style="padding:8px;border-radius:8px">
+          <option value="default">Preset: Default</option>
+          <option value="ocean">Ocean</option>
+          <option value="sunset">Sunset</option>
+          <option value="mint">Mint</option>
+          <option value="image1">Pattern A</option>
+          <option value="image2">Pattern B</option>
+        </select>
+        <button style="color:#000"class="btn alt small" id="themeApply">Apply</button>
+        <label style="color:#000"class="btn alt small" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="file" id="uploadSticker" accept="image/*" style="display:none"> Upload Sticker
+        </label>
+        <button style="color:#000"class="btn alt small" id="notifyPerm">🔔 Reminders</button>
+        <button style="color:#000"class="btn alt small" id="themeToggle">🌙</button>
+        <button class="btn small" id="printBtn">🖨 Print</button>
+        <button class="btn success small" id="saveBtn">💾 Save</button>
+        <button class="btn warn small" id="resetBtn">♻ Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="board" class="board"></div>
+
+      <div class="notesCard">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>📝 Notes</strong> <span class="small-muted">— general notes for the week</span></div>
+          <div class="small-muted" id="savedHint">Auto-save ON</div>
+        </div>
+        <textarea id="notesArea" placeholder="Write general notes..."></textarea>
+      </div>
+
+      <div class="footerbar">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div class="small-muted">Bulk:</div>
+          <button class="btn small" id="markAllDone">Mark all done</button>
+          <button class="btn small" id="clearCompleted">Clear completed</button>
+          <button class="btn small" id="sortAZ">Sort A → Z</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;width:50%;min-width:220px">
+          <div class="small-muted">Weekly progress</div>
+          <div class="progress"><div id="progBar"></div></div>
+          <div id="progText" class="small-muted">0%</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<!-- Sound for alarm -->
+<audio id="alarmSound">
+  <source src="data:audio/mpeg;base64,//uQZAAAAAAAAAAAAAAAAAAAA..." type="audio/mpeg">
+</audio>
+
+<script>
+const STORAGE = "todo_vip_ultimate_v1";
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+let state = null;
+const board = document.getElementById("board");
+const CHECK_INTERVAL = 30 * 1000;
+let notificationPermission = (window.Notification && Notification.permission) || "default";
+let customStickers = [];
+
+function defaultState(){
+  const baseDay = ()=>({ settings:{ textColor:"#0c2444", bgColor:"#ffffff", fontSize:15, theme:"default" }, tasks:[] });
+  const s = { meta:{ weekDate:"", theme:"light" }, notes:"" };
+  DAYS.forEach(d=>s[d]=baseDay());
+  return s;
+}
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+function saveToStorage(show=false){
+  state.notes = $("#notesArea").value;
+  state.meta.weekDate = $("#weekDate").value;
+  localStorage.setItem(STORAGE, JSON.stringify(state));
+  if(show) alert("✅ Saved!");
+}
+function loadFromStorage(){
+  const raw = localStorage.getItem(STORAGE);
+  if(!raw) return false;
+  try{
+    const obj = JSON.parse(raw);
+    const def = defaultState();
+    state = Object.assign(def, obj);
+    DAYS.forEach(d=>{
+      state[d] = Object.assign(def[d], state[d] || {});
+      state[d].settings = Object.assign(def[d].settings, state[d].settings || {});
+      state[d].tasks = Array.isArray(state[d].tasks) ? state[d].tasks : [];
+    });
+    return true;
+  }catch(e){ console.warn("load error", e); return false; }
+}
+
+function buildBoard(){
+  board.innerHTML = "";
+  DAYS.forEach(day=>{
+    const card = document.createElement("article");
+    card.className = "card";
+    card.id = `card-${day}`;
+    card.style.background = state[day].settings.bgColor;
+
+    card.innerHTML = `
+      <div class="head"><h3>${day}</h3><div class="meta" id="meta-${day}">0 / 0</div></div>
+      <div class="controls">
+        <div class="control"><span class="small-muted">Text</span><input type="color" id="color-${day}" value="${state[day].settings.textColor}" /></div>
+        <div class="control"><span class="small-muted">Card</span><input type="color" id="bg-${day}" value="${state[day].settings.bgColor}" /></div>
+        <div class="control" style="min-width:120px"><span class="small-muted">Size</span><input type="range" id="size-${day}" min="12" max="28" value="${state[day].settings.fontSize}" /></div>
+      </div>
+
+      <div class="add">
+        <input type="text" id="input-${day}" placeholder="Task for ${day}..." />
+        <input type="datetime-local" id="deadline-${day}" />
+        <button class="btn" id="addBtn-${day}">Add</button>
+      </div>
+
+      <ul class="tasks" id="list-${day}"></ul>
+
+      <div class="bulk">
+        <button class="btn small" id="mark-${day}">Mark all</button>
+        <button class="btn small" id="clear-${day}">Clear done</button>
+        <button class="btn small" id="sort-${day}">Sort A→Z</button>
+      </div>
+    `;
+    board.appendChild(card);
+  });
+
+  bindBoardEvents();
+  renderAll();
+}
+
+function renderDay(day){
+  const ul = $(`#list-${day}`);
+  ul.innerHTML = "";
+  const tasks = state[day].tasks || [];
+  ul.style.color = state[day].settings.textColor;
+  ul.style.fontSize = state[day].settings.fontSize + "px";
+  applyThemeToCard(day, state[day].settings.theme);
+
+  tasks.forEach((t,i)=>{
+    const li = document.createElement("li");
+    li.className = "task";
+    if(t.done) li.classList.add("completed");
+    li.draggable = true;
+    li.dataset.idx = i;
+
+    const dl = t.deadlineISO ? `<div style="font-size:12px;color:${t.done? '#888':'#b33'}">${formatLocal(t.deadlineISO)}</div>` : "";
+    const sticker = t.stickerImg ? `<img src="${t.stickerImg}" style="width:20px;height:20px;object-fit:cover;border-radius:4px;margin-right:6px">` 
+                  : (t.sticker ? `${t.sticker} ` : "");
+
+    li.innerHTML = `
+      <input type="checkbox" class="check" ${t.done ? "checked":""} />
+      <div style="display:flex;flex-direction:column">
+        <div class="text" contenteditable="true" spellcheck="false">${(sticker && t.stickerImg) ? '' : sticker}${escapeHtml(t.text)}</div>
+        ${dl}
+      </div>
+      <div class="actions">
+        <button class="chip stick" title="Sticker">⭐</button>
+        <button class="chip edit" title="Edit">✎</button>
+        <button class="chip del" title="Delete">🗑</button>
+        <button class="chip alarm" title="Snooze">⏰</button>
+      </div>
+    `;
+
+    li.addEventListener("dragstart", ()=>{ li.classList.add("dragging"); });
+    li.addEventListener("dragend", ()=>{ li.classList.remove("dragging"); saveToStorage(false); });
+
+    ul.appendChild(li);
+  });
+
+  ul.addEventListener("dragover", e=>{
+    e.preventDefault();
+    const dragging = ul.querySelector(".dragging");
+    if(!dragging) return;
+    const after = getDragAfterElement(ul, e.clientY);
+    if(!after) ul.appendChild(dragging); else ul.insertBefore(dragging, after);
+  });
+
+  ul.addEventListener("drop", ()=>{
+    const newTasks = [];
+    $$("#list-"+day+" .task").forEach(li=>{
+      const chk = li.querySelector(".check");
+      const txtEl = li.querySelector(".text");
+      let txt = txtEl.innerText.trim();
+      const stickerMatch = txt.match(/^(⭐|🔥|✅|❌|🎯|⚡)\s+/);
+      let sticker = "", stickerImg = "";
+      if(stickerMatch){ sticker = stickerMatch[1]; txt = txt.replace(/^(⭐|🔥|✅|❌|🎯|⚡)\s+/, ''); }
+      newTasks.push({ text: txt, done: !!chk.checked, sticker, stickerImg:"", deadlineISO:"" });
+    });
+    state[day].tasks = newTasks;
+    saveToStorage(false);
+    renderDay(day);
+    updateProgress();
+  });
+
+  const done = tasks.filter(t=>t.done).length;
+  $(`#meta-${day}`).textContent = `${done} / ${tasks.length}`;
+}
+
+function renderAll(){ DAYS.forEach(renderDay); updateProgress(); scheduleAllReminders(); }
+
+function bindBoardEvents(){
+  DAYS.forEach(day=>{
+    $(`#addBtn-${day}`).addEventListener("click", ()=>onAdd(day));
+    $(`#input-${day}`).addEventListener("keydown", e=>{ if(e.key==="Enter") onAdd(day); });
+
+    $(`#color-${day}`).addEventListener("input", e=>{ state[day].settings.textColor = e.target.value; renderDay(day); saveToStorage(false); });
+    $(`#bg-${day}`).addEventListener("input", e=>{ state[day].settings.bgColor = e.target.value; $(`#card-${day}`).style.background = e.target.value; state[day].settings.theme = "custom"; saveToStorage(false); });
+    $(`#size-${day}`).addEventListener("input", e=>{ state[day].settings.fontSize = Number(e.target.value); renderDay(day); saveToStorage(false); });
+
+    $(`#mark-${day}`).addEventListener("click", ()=>{ state[day].tasks.forEach(t=>t.done=true); renderDay(day); saveToStorage(false); updateProgress();});
+    $(`#clear-${day}`).addEventListener("click", ()=>{ state[day].tasks = state[day].tasks.filter(t=>!t.done); renderDay(day); saveToStorage(false); updateProgress();});
+    $(`#sort-${day}`).addEventListener("click", ()=>{ state[day].tasks.sort((a,b)=>a.text.localeCompare(b.text)); renderDay(day); saveToStorage(false); });
+
+    $(`#list-${day}`).addEventListener("click", e=>{
+      const li = e.target.closest(".task"); if(!li) return;
+      const idx = Array.from(li.parentNode.children).indexOf(li);
+      if(e.target.classList.contains("del")){ state[day].tasks.splice(idx,1); renderDay(day); saveToStorage(false); updateProgress(); return; }
+      if(e.target.classList.contains("stick")){
+        const pick = prompt("Enter sticker emoji (⭐ 🔥 ✅ ❌ 🎯 ⚡) or type 'img' to choose uploaded image:");
+        if(!pick) return;
+        if(pick.trim().toLowerCase() === "img"){
+          if(customStickers.length === 0){ alert("No uploaded stickers yet. Use Upload Sticker in toolbar."); return; }
+          const choice = prompt("Choose image index (1.."+customStickers.length+"):\n" + customStickers.map((u,i)=> (i+1)+": (image)").join("\n"));
+          const idxChoice = Number(choice)-1;
+          if(customStickers[idxChoice]){ state[day].tasks[idx].stickerImg = customStickers[idxChoice]; }
+        } else if(["⭐","🔥","✅","❌","🎯","⚡"].includes(pick.trim())){
+          state[day].tasks[idx].sticker = pick.trim();
+        }
+        renderDay(day); saveToStorage(false); return;
+      }
+      if(e.target.classList.contains("edit")){ li.querySelector(".text").focus(); return; }
+      if(e.target.classList.contains("check")){ state[day].tasks[idx].done = e.target.checked; li.classList.toggle("completed", e.target.checked); saveToStorage(false); updateProgress(); return; }
+      if(e.target.classList.contains("alarm")){
+        const snooze = prompt("Snooze for minutes? (10 / 30 / 60) — leave blank to cancel", "10");
+        const minutes = Number(snooze);
+        if([10,30,60].includes(minutes)){
+          const dt = new Date(Date.now() + minutes*60000).toISOString();
+          state[day].tasks[idx].deadlineISO = dt;
+          state[day].tasks[idx]._notified = false;
+          renderDay(day); saveToStorage(false);
+          alert("Reminder set for "+minutes+" minutes from now.");
+        }
+        return;
+      }
+    });
+
+    $(`#list-${day}`).addEventListener("input", throttle((e)=>{
+      const li = e.target.closest(".task"); if(!li) return;
+      const idx = Array.from(li.parentNode.children).indexOf(li);
+      let txt = li.querySelector(".text").innerText.trim();
+      const stickerMatch = txt.match(/^(⭐|🔥|✅|❌|🎯|⚡)\s+/);
+      if(stickerMatch){ state[day].tasks[idx].sticker = stickerMatch[1]; txt = txt.replace(/^(⭐|🔥|✅|❌|🎯|⚡)\s+/, ''); }
+      state[day].tasks[idx].text = txt;
+      saveThrottled();
+    }, 300));
+  });
+
+  $("#search").addEventListener("input", throttle(onSearch,180));
+  $("#saveBtn").addEventListener("click", ()=>saveToStorage(true));
+  $("#resetBtn").addEventListener("click", ()=>{ if(confirm("Reset everything?")){ localStorage.removeItem(STORAGE); state = defaultState(); init(); }});
+  $("#printBtn").addEventListener("click", ()=>window.print());
+  $("#exportBtn").addEventListener("click", doExport);
+  $("#importBtn").addEventListener("click", ()=>$("#importFile").click());
+  $("#importFile").addEventListener("change", handleImport);
+  $("#themeToggle").addEventListener("click", ()=>{ document.body.classList.toggle("dark"); document.body.classList.toggle("light"); state.meta.theme = document.body.classList.contains("dark") ? "dark" : (document.body.classList.contains("light") ? "light" : ""); saveToStorage(false); });
+  $("#weekDate").addEventListener("change", ()=>{ state.meta.weekDate = $("#weekDate").value; saveToStorage(false); });
+  $("#themeApply").addEventListener("click", ()=>{ const t = $("#themeSelect").value; DAYS.forEach(d=>{ state[d].settings.theme = t; applyThemeToCard(d,t); saveToStorage(false); }); });
+  $("#notifyPerm").addEventListener("click", requestNotifications);
+  $("#markAllDone").addEventListener("click", ()=>{ DAYS.forEach(d=>state[d].tasks.forEach(t=>t.done=true)); renderAll(); saveToStorage(false);});
+  $("#clearCompleted").addEventListener("click", ()=>{ DAYS.forEach(d=>state[d].tasks = state[d].tasks.filter(t=>!t.done)); renderAll(); saveToStorage(false);});
+  $("#sortAZ").addEventListener("click", ()=>{ DAYS.forEach(d=>state[d].tasks.sort((a,b)=>a.text.localeCompare(b.text))); renderAll(); saveToStorage(false);});
+
+  $("#uploadSticker").addEventListener("change", ev=>{
+    const f = ev.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = e=>{ customStickers.push(e.target.result); alert("Sticker uploaded! Now you can add it via task → Sticker → 'img' option."); };
+    r.readAsDataURL(f);
+  });
+
+  document.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="s"){ e.preventDefault(); saveToStorage(true); }});
+}
+
+function onAdd(day){
+  const input = $(`#input-${day}`), dl = $(`#deadline-${day}`);
+  const text = input.value.trim();
+  if(!text) return;
+  const dlISO = dl.value ? new Date(dl.value).toISOString() : "";
+  state[day].tasks.push({ text, done:false, sticker:"", stickerImg:"", deadlineISO: dlISO, _notified:false });
+  input.value = ""; dl.value = "";
+  renderDay(day); saveToStorage(false); updateProgress(); scheduleAllReminders();
+}
+
+function getDragAfterElement(container, y){
+  const draggableElements = [...container.querySelectorAll('.task:not(.dragging)')];
+  return draggableElements.reduce((closest, child)=>{
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if(offset < 0 && offset > closest.offset) return { offset, element: child };
+    else return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function onSearch(e){
+  const q = e.target.value.trim().toLowerCase();
+  DAYS.forEach(day=>{
+    $$("#list-"+day+" .task").forEach(li=>{
+      const txt = li.querySelector(".text").innerText.toLowerCase();
+      const match = q && txt.includes(q);
+      li.style.display = (!q || match) ? "" : "none";
+      li.classList.toggle("match", match);
+    });
+  });
+}
+
+function updateProgress(){
+  let total=0, done=0;
+  DAYS.forEach(d=>{ state[d].tasks.forEach(t=>{ total++; if(t.done) done++; }); });
+  const pct = total ? Math.round(done*100/total) : 0;
+  $("#progBar").style.width = pct + "%";
+  $("#progText").textContent = `${pct}% (${done}/${total})`;
+}
+
+function doExport(){
+  const json = JSON.stringify(state, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `todo-week-${(new Date()).toISOString().slice(0,19).replace(/[:T]/g,"-")}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function handleImport(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    try{
+      const obj = JSON.parse(ev.target.result);
+      if(!obj) throw new Error("Invalid");
+      state = Object.assign(defaultState(), obj);
+      DAYS.forEach(d=>{ state[d] = Object.assign(defaultState()[d], state[d]||{}); state[d].settings = Object.assign(defaultState()[d].settings, state[d].settings||{}); });
+      init();
+      saveToStorage(false);
+      alert("✅ Imported!");
+    }catch(err){ alert("❌ Invalid JSON"); }
+  };
+  reader.readAsText(file);
+}
+function downloadReadme(){
+  const txt = `Weekly To-Do Planner — README
+- Add tasks under a day. Optionally choose a deadline/time.
+- To add custom image stickers: Upload sticker (toolbar) → then in task click Sticker → type 'img' and pick image index.
+- Notifications: click 🔔 Reminders and allow notifications.
+- Use Export to backup JSON; Import to restore.
+- Shortcuts: Ctrl/Cmd+S = Save.
+Enjoy!`;
+  const blob = new Blob([txt], {type:"text/plain"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "README-todo-vip.txt"; a.click(); URL.revokeObjectURL(a.href);
+}
+
+function requestNotifications(){
+  if(!("Notification" in window)){ alert("Notifications not supported."); return; }
+  Notification.requestPermission().then(p=>{ notificationPermission = p; alert("Permission: "+p); if(p==="granted") scheduleAllReminders(); });
+}
+function scheduleAllReminders(){
+  if(window._reminderInterval) clearInterval(window._reminderInterval);
+  window._reminderInterval = setInterval(checkReminders, CHECK_INTERVAL);
+  checkReminders();
+}
+function checkReminders(){
+  if(notificationPermission !== "granted") return;
+  const now = Date.now();
+  DAYS.forEach(day=>{
+    state[day].tasks.forEach((t, idx)=>{
+      if(!t.deadlineISO || t._notified) return;
+      const dl = new Date(t.deadlineISO).getTime();
+      if(isNaN(dl)) return;
+      if(dl <= now + 60000 && dl >= now - 60000){
+        showNotificationForTask(day, idx);
+        state[day].tasks[idx]._notified = true; saveToStorage(false);
+      }
+    });
+  });
+}
+function showNotificationForTask(day, idx){
+  if(notificationPermission !== "granted") return;
+  const t = state[day].tasks[idx];
+  const title = `Reminder — ${day}`;
+  const body = (t.sticker ? t.sticker + " " : "") + t.text + (t.deadlineISO ? ` (Due: ${formatLocal(t.deadlineISO)})` : "");
+  const n = new Notification(title, { body });
+  playAlarm();
+  n.onclick = ()=>window.focus();
+}
+function playAlarm(){
+  const a = document.getElementById("alarmSound");
+  if(!a) return;
+  a.currentTime = 0;
+  a.play().catch(()=>{/* ignore play blocked */});
+}
+
+function applyThemeToCard(day, theme){
+  const card = $(`#card-${day}`);
+  state[day].settings.theme = theme || state[day].settings.theme || "default";
+  if(theme === "ocean") card.style.background = "linear-gradient(135deg,#a0e9ff,#7ac7ff)";
+  else if(theme === "sunset") card.style.background = "linear-gradient(135deg,#ffd0a6,#ff9a9e)";
+  else if(theme === "mint") card.style.background = "linear-gradient(135deg,#d7ffd9,#aef0c0)";
+  else if(theme === "image1") card.style.background = "url('data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='%23f0fbff'/><circle cx='40' cy='40' r='40' fill='%23d0f0ff' opacity='0.6'/></svg>") + "') center/cover";
+  else if(theme === "image2") card.style.background = "url('data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='%23fff8f0'/><path d='M0,100 C40,80 160,120 200,100 L200,200 L0,200 Z' fill='%23ffe6c7' opacity='0.9'/></svg>") + "') center/cover";
+  else card.style.background = state[day].settings.bgColor || "#fff";
+}
+
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function throttle(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; }
+const saveThrottled = throttle(()=>saveToStorage(false), 400);
+function formatLocal(iso){ if(!iso) return ""; const d = new Date(iso); if(isNaN(d)) return ""; return d.toLocaleString(); }
+
+function init(){
+  if(!loadFromStorage()) state = defaultState();
+  document.body.classList.toggle("dark", state.meta.theme === "dark");
+  document.body.classList.toggle("light", state.meta.theme === "light");
+  $("#weekDate").value = state.meta.weekDate || "";
+  $("#notesArea").value = state.notes || "";
+  buildBoard();
+  updateProgress();
+  scheduleAllReminders();
+}
+window.addEventListener("beforeunload", ()=>saveToStorage(false));
+init();
+
+document.getElementById("alarmSound").addEventListener("error", ()=>{/* no-op */});
+</script>
+</body>
+</html>
